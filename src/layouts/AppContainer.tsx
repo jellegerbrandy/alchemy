@@ -78,7 +78,39 @@ class AppContainer extends React.Component<IProps, null> {
               </Switch>
             </div>
             <div className={css.pendingTransactions}>
+              <div className={css.transactionWrapper}>
+              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.pending + " " + css.minimized}>
+                <div className={css.statusIcon}> 
+                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
+                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
+                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
+                </div>
+                <div className={css.transactionMessage}>
+                  <div className={css.clearfix}>
+                    <div className={css.left}>
+                      <span className={css.pending}>PENDING TRANSACTION</span>
+                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
+                      <span className={css.error}>TRANSACTION FAILED</span>
+                    </div>
+                    <div className={css.right}>
+                      <span className={css.pending}>1 OF 1</span>
+                      <span className={css.success}>1 OF 1</span>
+                      <span className={css.error}>ERROR</span>
+                    </div>
+                  </div>
+                  <div className={css.notificationMessage}>
+                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
+                  </div>
+                </div>
+                <div className={css.notificationControls}>
+                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
+                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
+                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
+                </div>
+              </div>
+              </div>
 
+              <br/>
 
               <div className={css.pendingTransaction + " " + css.clearfix + " " + css.error}>
                 <div className={css.statusIcon}> 
@@ -110,6 +142,8 @@ class AppContainer extends React.Component<IProps, null> {
                 </div>
               </div>
 
+              <br/>
+
               <div className={css.pendingTransaction + " " + css.clearfix + " " + css.success}>
                 <div className={css.statusIcon}> 
                   <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
@@ -130,7 +164,7 @@ class AppContainer extends React.Component<IProps, null> {
                     </div>
                   </div>
                   <div className={css.notificationMessage}>
-                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
+                    <span>Fail stake on <a href="#">Travel, hotels and registration for Denver Eth</a></span>
                   </div>
                 </div>
                 <div className={css.notificationControls}>
@@ -139,6 +173,8 @@ class AppContainer extends React.Component<IProps, null> {
                   <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
                 </div>
               </div>
+
+              <br/>
 
               <div className={css.pendingTransaction + " " + css.clearfix + " " + css.pending}>
                 <div className={css.statusIcon}> 
@@ -160,7 +196,7 @@ class AppContainer extends React.Component<IProps, null> {
                     </div>
                   </div>
                   <div className={css.notificationMessage}>
-                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
+                    <span>Vote on <a href="#">Consultants to help with explainer videos</a></span>
                   </div>
                 </div>
                 <div className={css.notificationControls}>
