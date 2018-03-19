@@ -1,46 +1,43 @@
-import * as Arc from '@daostack/arc.js';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { connect } from 'react-redux';
-import { CSSTransition } from 'react-transition-group';
+import * as Arc from "@daostack/arc.js";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { connect } from "react-redux";
+import { Link, RouteComponentProps } from "react-router-dom";
+import { CSSTransition } from "react-transition-group";
 
-import { IDaoState } from 'reducers/arcReducer'
-import { INotificationsState } from 'reducers/notificationsReducer'
-import { IWeb3State } from 'reducers/web3Reducer'
-import { IRootState } from 'reducers';
-import * as web3Actions from 'actions/web3Actions';
+import * as web3Actions from "actions/web3Actions";
+import { IRootState } from "reducers";
+import { IDaoState } from "reducers/arcReducer";
+import { IWeb3State } from "reducers/web3Reducer";
 
-import AccountBalance from 'components/Account/AccountBalance'
-import AccountImage from 'components/Account/AccountImage';
+import AccountBalance from "components/Account/AccountBalance";
+import AccountImage from "components/Account/AccountImage";
 
-import * as css from "./App.scss"
+import * as css from "./App.scss";
 
 interface IStateProps {
-  dao: IDaoState
-  notifications: INotificationsState
-  web3State: IWeb3State
+  dao: IDaoState;
+  web3State: IWeb3State;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     dao: state.arc.daos[ownProps.daoAddress],
-    notifications: state.notifications,
-    web3State: state.web3
+    web3State: state.web3,
   };
 };
 
 interface IDispatchProps {
-  changeAccount: typeof web3Actions.changeAccount
+  changeAccount: typeof web3Actions.changeAccount;
 }
 
 const mapDispatchToProps = {
-  changeAccount: web3Actions.changeAccount
+  changeAccount: web3Actions.changeAccount,
 };
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
-const Fade = ({ children, ...props } : any) => (
+const Fade = ({ children, ...props }: any) => (
   <CSSTransition
     {...props}
     timeout={1000}
@@ -48,7 +45,7 @@ const Fade = ({ children, ...props } : any) => (
      enter: css.fadeEnter,
      enterActive: css.fadeEnterActive,
      exit: css.fadeExit,
-     exitActive: css.fadeExitActive
+     exitActive: css.fadeExitActive,
     }}
   >
     {children}
@@ -56,14 +53,14 @@ const Fade = ({ children, ...props } : any) => (
 );
 class HeaderContainer extends React.Component<IProps, null> {
 
-  handleChangeAccount = (e : any) => {
-    let selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
+  public handleChangeAccount = (e: any) => {
+    const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
     const newAddress = selectElement.value;
     this.props.changeAccount(newAddress);
   }
 
-  render() {
-    const { dao, notifications, web3State } = this.props;
+  public render() {
+    const { dao, web3State } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     let member = dao ? dao.members[web3State.ethAccountAddress] : false;
@@ -71,23 +68,22 @@ class HeaderContainer extends React.Component<IProps, null> {
       member = { tokens : 0, reputation: 0 };
     }
 
-    const accountOptionNodes = web3.eth.accounts.map((account : string) => (
-      <option key={'account_' + account}>
+    const accountOptionNodes = web3.eth.accounts.map((account: string) => (
+      <option key={"account_" + account}>
         {account}
       </option>
     ));
 
     return(
       <nav className={css.header}>
-        <Link className={css.alchemyLogo} to='/'><img src='/assets/images/alchemy-logo.svg'/></Link>
+        <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
         <span className={css.version}>v.{VERSION}#{COMMIT}</span>
-        { notifications.alert ? <Fade in={notifications.alert.length > 0}><div className={css.alert}>{notifications.alert}</div></Fade> : ""}
         { web3
           ? <div className={css.accountInfo}>
               <div className={css.holdings}>
                 <div>
                   <span className={css.holdingsLabel}>Current account</span>
-                  <select onChange={this.handleChangeAccount} ref='accountSelectNode' defaultValue={web3State.ethAccountAddress}>
+                  <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
                     {accountOptionNodes}
                   </select>
                 </div>
@@ -111,7 +107,7 @@ class HeaderContainer extends React.Component<IProps, null> {
           : ""
         }
       </nav>
-    )
+    );
   }
 }
 

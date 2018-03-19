@@ -1,61 +1,90 @@
-import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Switch, Route } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
+import * as Arc from '@daostack/arc.js';
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { Route, Switch } from "react-router-dom";
+import { bindActionCreators } from "redux";
 
-import store from '../configureStore';
-import { IRootState } from 'reducers';
-import { IArcState } from 'reducers/arcReducer'
-import { IWeb3State, ConnectionStatus } from 'reducers/web3Reducer'
+import { IRootState } from "reducers";
+import { IArcState } from "reducers/arcReducer";
+import { ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
+import store from "../configureStore";
 
-import * as arcActions from 'actions/arcActions';
+import * as web3Actions from 'actions/web3Actions';
+import * as arcActions from "actions/arcActions";
+import * as notificationsActions from "actions/notificationsActions";
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
-import HeaderContainer from "layouts/HeaderContainer";
-import HomeContainer from "components/Home/HomeContainer";
-import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
-import NoWeb3Container from "components/Errors/NoWeb3Container";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
+import NoWeb3Container from "components/Errors/NoWeb3Container";
+import HomeContainer from "components/Home/HomeContainer";
+import Notification from "components/Notification/Notification";
+import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
+import HeaderContainer from "layouts/HeaderContainer";
 
-import * as css from "./App.scss"
+import { INotificationState } from "reducers/notificationsReducer";
+import * as css from "./App.scss";
 
 interface IStateProps {
-  arc: IArcState
-  connectionStatus: ConnectionStatus
-  ethAccountAddress: string | null
-  web3: IWeb3State
+  arc: IArcState;
+  connectionStatus: ConnectionStatus;
+  ethAccountAddress: string | null;
+  notifications: INotificationState;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => ({
+const mapStateToProps = (state: IRootState, ownProps: any) => ({
   arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
-  web3: state.web3
+  notifications: state.notifications,
 });
 
 interface IDispatchProps {
-  connectToArc: typeof arcActions.connectToArc
+  initializeWeb3: any;
+  changeAccount: any;
+  dismissAlert: typeof notificationsActions.dismissAlert;
 }
 
 const mapDispatchToProps = {
-  connectToArc: arcActions.connectToArc
+  initializeWeb3: web3Actions.initializeWeb3,
+  changeAccount: web3Actions.changeAccount,
+  dismissAlert: notificationsActions.dismissAlert,
 };
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
+  public accountInterval: any;
 
-  constructor(props : IProps) {
+  constructor(props: IProps) {
     super(props);
   }
 
-  componentDidMount () {
-    this.props.connectToArc();
+  public async componentDidMount() {
+    const { initializeWeb3} = this.props;
+    initializeWeb3();
   }
 
-  render() {
-    const { connectionStatus, ethAccountAddress } = this.props;
+  public componentWillReceiveProps(props: IProps) {
+    // If we are connected to an account through web3
+    if (props.ethAccountAddress) {
+      // Setup an interval to check for the account to change (e.g. via MetaMask)
+      // First clear the old interval
+      if (this.accountInterval) {
+        clearInterval(this.accountInterval);
+      }
+
+      this.accountInterval = setInterval(async function(accountAddress: string) {
+        const newAccount = await Arc.Utils.getDefaultAccount();
+        if (newAccount !== accountAddress) {
+          this.props.changeAccount(newAccount);
+        }
+      }.bind(this, props.ethAccountAddress), 400);
+    }
+  }
+
+  public render() {
+    const { connectionStatus, notifications, ethAccountAddress, dismissAlert } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending
@@ -77,136 +106,16 @@ class AppContainer extends React.Component<IProps, null> {
                 <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
               </Switch>
             </div>
-            <div className={css.pendingTransactions}>
-              <div className={css.transactionWrapper}>
-              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.pending + " " + css.minimized}>
-                <div className={css.statusIcon}> 
-                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
-                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
-                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
-                </div>
-                <div className={css.transactionMessage}>
-                  <div className={css.clearfix}>
-                    <div className={css.left}>
-                      <span className={css.pending}>PENDING TRANSACTION</span>
-                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
-                      <span className={css.error}>TRANSACTION FAILED</span>
-                    </div>
-                    <div className={css.right}>
-                      <span className={css.pending}>1 OF 1</span>
-                      <span className={css.success}>1 OF 1</span>
-                      <span className={css.error}>ERROR</span>
-                    </div>
-                  </div>
-                  <div className={css.notificationMessage}>
-                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
-                  </div>
-                </div>
-                <div className={css.notificationControls}>
-                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
-                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
-                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
-                </div>
-              </div>
-              </div>
-
-              <br/>
-
-              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.error}>
-                <div className={css.statusIcon}> 
-                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
-                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
-                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
-                </div>
-                <div className={css.transactionMessage}>
-                  <div className={css.clearfix}>
-                    <div className={css.left}>
-                      <span className={css.pending}>PENDING TRANSACTION</span>
-                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
-                      <span className={css.error}>TRANSACTION FAILED</span>
-                    </div>
-                    <div className={css.right}>
-                      <span className={css.pending}>1 OF 1</span>
-                      <span className={css.success}>1 OF 1</span>
-                      <span className={css.error}>ERROR</span>
-                    </div>
-                  </div>
-                  <div className={css.notificationMessage}>
-                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
-                  </div>
-                </div>
-                <div className={css.notificationControls}>
-                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
-                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
-                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
-                </div>
-              </div>
-
-              <br/>
-
-              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.success}>
-                <div className={css.statusIcon}> 
-                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
-                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
-                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
-                </div>
-                <div className={css.transactionMessage}>
-                  <div className={css.clearfix}>
-                    <div className={css.left}>
-                      <span className={css.pending}>PENDING TRANSACTION</span>
-                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
-                      <span className={css.error}>TRANSACTION FAILED</span>
-                    </div>
-                    <div className={css.right}>
-                      <span className={css.pending}>1 OF 1</span>
-                      <span className={css.success}>1 OF 1</span>
-                      <span className={css.error}>ERROR</span>
-                    </div>
-                  </div>
-                  <div className={css.notificationMessage}>
-                    <span>Fail stake on <a href="#">Travel, hotels and registration for Denver Eth</a></span>
-                  </div>
-                </div>
-                <div className={css.notificationControls}>
-                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
-                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
-                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
-                </div>
-              </div>
-
-              <br/>
-
-              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.pending}>
-                <div className={css.statusIcon}> 
-                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
-                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
-                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
-                </div>
-                <div className={css.transactionMessage}>
-                  <div className={css.clearfix}>
-                    <div className={css.left}>
-                      <span className={css.pending}>PENDING TRANSACTION</span>
-                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
-                      <span className={css.error}>TRANSACTION FAILED</span>
-                    </div>
-                    <div className={css.right}>
-                      <span className={css.pending}>1 OF 1</span>
-                      <span className={css.success}>1 OF 1</span>
-                      <span className={css.error}>ERROR</span>
-                    </div>
-                  </div>
-                  <div className={css.notificationMessage}>
-                    <span>Vote on <a href="#">Consultants to help with explainer videos</a></span>
-                  </div>
-                </div>
-                <div className={css.notificationControls}>
-                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
-                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
-                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
-                </div>
-              </div>
-
-
+            <div className={css.notificationsWrapper}>
+              {notifications.map((n) =>
+                (<Notification
+                  key={n.id}
+                  id={n.id}
+                  message={n.message}
+                  timestamp={n.timestamp}
+                  close={() => dismissAlert(n.id)}
+                />),
+              )}
             </div>
             <div className={css.background}></div>
           </div>
@@ -217,4 +126,3 @@ class AppContainer extends React.Component<IProps, null> {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
-
