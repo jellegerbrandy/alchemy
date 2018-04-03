@@ -25,9 +25,6 @@ export default class DaoHeader extends React.Component<IProps, null> {
           <div className={css.daoDescription}>
             <div className={css.daoName}>
               {dao.name}
-              <button className={css.daoPrefs}>
-                <img src="/assets/images/configure-dao-icon.svg"/>
-              </button>
             </div>
             <div className={css.daoReputationInfo}>
               {Object.keys(dao.members).length} reputation holders with {Math.round(dao.reputationCount).toLocaleString()} {dao.name} reputation
