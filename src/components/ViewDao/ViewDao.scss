@@ -104,7 +104,7 @@ a.navItem {
   z-index: 100;
   transition: all .25s ease;
   margin: 10px 30px;
-  border-bottom: 3px solid $accent-4-transparent;
+  border-bottom: 3px solid $black-transparent;
 }
 
 .nav a.navItem:nth-child(1) {
@@ -136,14 +136,14 @@ a.navItem.selected {
   font-size: $headline-2;
   font-weight: $bold;
   color: $black;
-  border-bottom: 3px solid $accent-4;
+  border-bottom: 3px solid $black;
 }
 
 a.navItem:hover {
   font-size: $headline-2;
   font-weight: $bold;
   color: $black;
-  border-bottom: 3px solid $accent-4;
+  border-bottom: 3px solid $black;
 }
 
 .daoAvatar {
