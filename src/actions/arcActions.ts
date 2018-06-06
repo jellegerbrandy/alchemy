@@ -97,10 +97,13 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
 
   const getBalance = promisify(web3.eth.getBalance);
 
+  const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+  const stakingToken = await (await Arc.Utils.requireContract('StandardToken')).at(await votingMachineInstance.contract.stakingToken());
   const daoData: IDaoState = {
     avatarAddress,
     controllerAddress: "",
     ethCount: Util.fromWei(await getBalance(avatarAddress)).toNumber(),
+    stakingTokenCount: Util.fromWei(await stakingToken.balanceOf(avatarAddress)).toNumber(),
     name: await dao.getName(),
     members: {},
     rank: 1, // TODO
@@ -500,6 +503,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
         ethCount: 0,
+        stakingTokenCount: 0,
         name: daoName,
         members: membersByAccount,
         rank: 1, // TODO
@@ -1000,7 +1004,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         eventWatcher.stopWatching()
       }
 
-      if (redemption.stakerBountyTokens) {
+      if (redemption && redemption.stakerBountyTokens) {
         const redeemDaoBountyTx = await votingMachineInstance.redeemDaoBounty({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
       }
 
@@ -1112,5 +1116,21 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       }
     })
     showOperation(OperationsStatus.Success, `Proposal '${proposal.title}' Executed!`)(dispatch);
+  }
+}
+
+export function onDAOEthBalanceChangeEvent(avatarAddress: string, eth: number, stakingToken: number) {
+  return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
+    const dao = getState().arc.daos[avatarAddress];
+    if (eth !== dao.ethCount || stakingToken !== dao.stakingTokenCount) {
+      dispatch({
+        type: arcConstants.ARC_ON_DAO_BALANCE_CHANGE,
+        payload: {
+          avatarAddress,
+          eth,
+          stakingToken
+        }
+      })
+    }
   }
 }

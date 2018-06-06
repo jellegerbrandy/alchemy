@@ -121,6 +121,7 @@ export interface IDaoState {
   avatarAddress: string;
   controllerAddress: string;
   ethCount: number;
+  stakingTokenCount: number;
   members: { [key: string]: IAccountState };
   name: string;
   rank: number;
@@ -470,6 +471,19 @@ const arcReducer = (state = initialState, action: any) => {
       } else {
         return state;
       }
+    }
+
+    case ActionTypes.ARC_ON_DAO_BALANCE_CHANGE: {
+      const { avatarAddress, eth, stakingToken } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            ethCount: {$set: eth || state.daos[avatarAddress].ethCount },
+            stakingTokenCount: {$set: stakingToken || state.daos[avatarAddress].stakingTokenCount },
+          }
+        }
+      });
     }
   }
 
