@@ -24,4 +24,15 @@ const store = createStore(
   ),
 );
 
+// A store for testing purposes
+export const mockStore = () => createStore(
+  reducers,
+  applyMiddleware(
+    actionCanceler(),
+    thunkMiddleware,
+    promiseMiddleware(),
+    routerMiddleware(history),
+  ),
+);
+
 export default store;
