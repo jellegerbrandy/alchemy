@@ -63,21 +63,20 @@ export function getDAOs() {
 
     // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
     const newOrgEvents = daoCreator.InitialSchemesSet({}, { fromBlock: 0 });
-    newOrgEvents.get(async (err: Error, eventsArray: any[]) => {
-      if (err) {
-        dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
-      }
-
+    try {
+      const events = await promisify(newOrgEvents.get)();
       const daos = {} as { [key: string]: IDaoState };
 
-      for (let index = 0; index < eventsArray.length; index++) {
-        const event = eventsArray[index];
+      for (let index = 0; index < events.length; index++) {
+        const event = events[index];
         daos[event.args._avatar] = await getDAOData(event.args._avatar, true);
       }
 
       dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: normalize(daos, schemas.daoList) });
-    });
-  };
+    } catch (err) {
+      dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
+    }
+  }
 }
 
 export function getDAO(avatarAddress: string) {
