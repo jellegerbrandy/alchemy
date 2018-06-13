@@ -622,7 +622,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
             type: arcConstants.ARC_CREATE_PROPOSAL,
             sequence: AsyncActionSequence.Pending,
             operation: {
-              message: `Submitting proposal ...`,
+              message: `Your proposal has been submitted and will be displayed in a few minutes.`,
               totalSteps,
             },
             meta,
