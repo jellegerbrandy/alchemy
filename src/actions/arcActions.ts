@@ -622,7 +622,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
             type: arcConstants.ARC_CREATE_PROPOSAL,
             sequence: AsyncActionSequence.Pending,
             operation: {
-              message: `Your proposal has been submitted and will be displayed in a few minutes.`,
+              message: `Your proposal '${title}' has been submitted and will be displayed in a few minutes.`,
               totalSteps,
             },
             meta,
@@ -638,7 +638,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         type: arcConstants.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Failed to submit proposal`,
+          message: `Failed to submit proposal '${title}'`,
         },
         meta,
       } as CreateProposalAction)
@@ -695,7 +695,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
       type: arcConstants.ARC_CREATE_PROPOSAL,
       sequence: AsyncActionSequence.Success,
       operation: {
-        message: `Proposal successfully created!`,
+        message: `Proposal "${serverProposal.title}" successfully submitted!`,
       },
       meta,
       payload
@@ -746,7 +746,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
             type: arcConstants.ARC_VOTE,
             sequence: AsyncActionSequence.Pending,
             operation: {
-              message: `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${proposal.title}...`,
+              message: `Your vote ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on "${proposal.title}" is pending and will be displayed in a few minutes`,
               totalSteps,
             },
             meta,
@@ -758,7 +758,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
         type: arcConstants.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Voting on "${proposal.title}" failed`
+          message: `Your vote ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on "${proposal.title}" failed`
         },
         meta,
       } as VoteAction)
@@ -829,7 +829,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       sequence: AsyncActionSequence.Success,
       meta,
       operation: {
-        message: `Voted on "${proposal.title}" successfully!`
+        message: `Your vote ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on "${proposal.title}" succeeded!`
       },
       payload
     } as VoteAction);
@@ -864,6 +864,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
     // We currently requires already pre-approving a bunch of GENs to stake with, so we don't do the approve call again
     Arc.ConfigService.set("autoApproveTokenTransfers", false);
 
+    const predictionString = prediction === VoteOptions.Yes ? 'Pass' : 'Fail';
+
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
       const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
@@ -889,7 +891,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
             type: arcConstants.ARC_STAKE,
             sequence: AsyncActionSequence.Pending,
             operation: {
-              message: `Staking on "${proposal.title}" ...`,
+              message: `Your stake on '${predictionString}' for "${proposal.title}" is pending and will be displayed once confirmed on the blockchain`,
               totalSteps,
             },
             meta
@@ -899,7 +901,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
             type: arcConstants.ARC_STAKE,
             sequence: AsyncActionSequence.Pending,
             operation: {
-              message: `Staking on "${proposal.title}" ...`,
+              message: `Your stake on '${predictionString}' for "${proposal.title}" is pending and will be displayed once confirmed on the blockchain`,
               totalSteps: txInfo.txCount,
             },
             meta
@@ -912,7 +914,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Staking on "${proposal.title}" failed`
+          message: `Your stake on '${predictionString}' for "${proposal.title}" failed`
         }
       } as StakeAction)
     }
@@ -932,6 +934,8 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
 
     const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
     const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
+
+    const predictionString = prediction === VoteOptions.Yes ? 'Pass' : 'Fail';
 
     const meta = {
       avatarAddress,
@@ -964,7 +968,7 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
       type: arcConstants.ARC_STAKE,
       sequence: AsyncActionSequence.Success,
       operation: {
-        message: `Staked on "${proposal.title}" successfully!`
+        message: `Your stake on '${predictionString}' for "${proposal.title}" succeeded!`
       },
       meta,
       payload
@@ -997,7 +1001,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       type: arcConstants.ARC_REDEEM,
       sequence: AsyncActionSequence.Pending,
       operation: {
-        message: `Redeeming rewards for proposal "${proposal.title}" ...`,
+        message: `Redeeming rewards for proposal "${proposal.title}" is pending confirmation on the blockchain`,
       },
       meta
     } as RedeemAction);
@@ -1058,7 +1062,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         type: arcConstants.ARC_REDEEM,
         sequence: AsyncActionSequence.Success,
         operation: {
-          message: `Successfully redeemed rewards for proposal "${proposal.title}"!`
+          message: `Redeeming rewards for proposal "${proposal.title}" succeeded!`
         },
         meta,
         payload
@@ -1070,7 +1074,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Error redeeming rewards for proposal "${proposal.title}"`
+          message: `Redeeming rewards for proposal "${proposal.title}" failed`
         }
       } as RedeemAction);
     }
