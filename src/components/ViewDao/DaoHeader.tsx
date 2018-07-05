@@ -29,12 +29,13 @@ export default class DaoHeader extends React.Component<IProps, null> {
               {dao.name}
             </div>
             <div className={css.daoReputationInfo}>
-              {Object.keys(dao.members).length} reputation holders with {Math.round(dao.reputationCount).toLocaleString()} {dao.name} reputation
+              <img src="/assets/images/Icon/Members.svg"/>
+              <Link to={"/dao/" + dao.avatarAddress + "/members/"}>{Object.keys(dao.members).length} reputation holders</Link> with {Math.round(dao.reputationCount).toLocaleString()} {dao.name} reputation
             </div>
           </div>
         </div>
         <div className={css.holdings + " " + css.clearfix}>
-          <h4>HOLDINGS</h4>
+          <h4>{dao.name} HOLDINGS</h4>
           <div>{dao.ethCount} ETH</div>
           <div>{dao.genCount} GEN</div>
         </div>

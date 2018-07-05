@@ -110,23 +110,24 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: "latest" });
     this.proposalEventWatcher.watch((error, result) => {
-      onProposalCreateEvent(result[0].args);
+      onProposalCreateEvent(result.args);
     });
 
     // Watch for new, confirmed stakes coming in for the current account
     // TODO: watch for all new stakes from anyone?
-    const genesisProtocolInstance = await Arc.GenesisProtocolFactory.deployed();
-    this.stakeEventWatcher = genesisProtocolInstance.Stake({ }, { fromBlock: "latest" });
-    this.stakeEventWatcher.watch((error, result) => {
-      onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount).toNumber());
-    });
-
-    this.voteEventWatcher = genesisProtocolInstance.VoteProposal({ }, { fromBlock: "latest" });
-    this.voteEventWatcher.watch((error, result) => {
-      onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation).toNumber());
-    });
-
     const daoInstance = await Arc.DAO.at(daoAddress);
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+    this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: "latest" });
+    this.stakeEventWatcher.watch((error, result) => {
+      onStakeEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
+    });
+
+    this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: "latest" });
+    this.voteEventWatcher.watch((error, result) => {
+      onVoteEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation).toNumber());
+    });
 
     this.transferEventWatcher = daoInstance.token.Transfer({}, { fromBlock: "latest" });
     this.transferEventWatcher.watch((error: any, result: any) => {
@@ -143,13 +144,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       onReputationChangeEvent(daoAddress, result.args._from);
     });
 
-    this.executeProposalEventWatcher = genesisProtocolInstance.ExecuteProposal({}, { fromBlock: "latest" });
+    this.executeProposalEventWatcher = votingMachineInstance.ExecuteProposal({}, { fromBlock: "latest" });
     this.executeProposalEventWatcher.watch((error, result) => {
-      const { _proposalId, _executionState, _decision, _totalReputation } = result[0].args;
-      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
+      const { _proposalId, _executionState, _decision, _totalReputation } = result.args;
+      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Util.fromWei(_totalReputation).toNumber());
     });
 
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
 
@@ -203,17 +203,20 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (dao) {
       return(
-        <div className={css.wrapper}>
-          <DaoHeader dao={dao} />
-          <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
-
-          <Switch>
-            <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
-            <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
-            <Route exact path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
-            <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
-            <Route path="/dao/:daoAddress" component={DaoProposalsContainer} />
-          </Switch>
+        <div className={css.outer}>
+          <div className={css.top}>
+            <DaoHeader dao={dao} />
+            <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
+          </div>
+          <div className={css.wrapper}>
+            <Switch>
+              <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
+              <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
+              <Route exact path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
+              <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
+              <Route path="/dao/:daoAddress" component={DaoProposalsContainer} />
+            </Switch>
+          </div>
         </div>
       );
     } else {

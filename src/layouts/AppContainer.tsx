@@ -1,8 +1,11 @@
 import * as Arc from '@daostack/arc.js';
 import axios from "axios";
+import * as History from "history";
 import * as React from "react";
+import { withCookies, Cookies } from 'react-cookie';
 import { connect, Dispatch } from "react-redux";
 import { Route, Switch } from "react-router-dom";
+import { replace as routerReplace } from "react-router-redux";
 import { bindActionCreators } from "redux";
 
 import { IRootState } from "reducers";
@@ -17,6 +20,7 @@ import * as operationsActions from 'actions/operationsActions';
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import Notification from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
+import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
 import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
@@ -31,26 +35,27 @@ import { IOperationsState } from 'reducers/operations';
 interface IStateProps {
   arc: IArcState;
   connectionStatus: ConnectionStatus;
+  cookies: Cookies;
   ethAccountAddress: string | null;
-  operations: IOperationsState,
+  history: History.History;
+  operations: IOperationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
   arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
+  history: ownProps.history,
   operations: state.operations,
 });
 
 interface IDispatchProps {
-  changeAccount: typeof web3Actions.changeAccount;
   dismissOperation: typeof operationsActions.dismissOperation;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
-  changeAccount: web3Actions.changeAccount,
   dismissOperation: operationsActions.dismissOperation,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
@@ -59,10 +64,19 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
-  public accountInterval: any;
 
   constructor(props: IProps) {
     super(props);
+  }
+
+  public async componentWillMount() {
+    const { cookies, history } = this.props;
+
+    // If this person has not seen the disclaimer, show them the home page
+    if (!cookies.get('seen_disclaimer')) {
+      cookies.set('seen_disclaimer', "true", { path: '/' });
+      history.replace("/");
+    }
   }
 
   public async componentDidMount() {
@@ -75,27 +89,8 @@ class AppContainer extends React.Component<IProps, null> {
     }
   }
 
-  public async componentWillReceiveProps(props: IProps) {
-    // If we are connected to an account through MetaMask then watch for account changes in MetaMask
-    const web3 = await Arc.Utils.getWeb3();
-    if (props.ethAccountAddress && (web3.currentProvider as any).isMetaMask === true ) {
-      // Setup an interval to check for the account to change
-      // First clear the old interval
-      if (this.accountInterval) {
-        clearInterval(this.accountInterval);
-      }
-
-      this.accountInterval = setInterval(async function(accountAddress: string) {
-        const newAccount = await Arc.Utils.getDefaultAccount();
-        if (newAccount !== accountAddress) {
-          this.props.changeAccount(newAccount);
-        }
-      }.bind(this, props.ethAccountAddress), 400);
-    }
-  }
-
   public render() {
-    const { connectionStatus, operations, ethAccountAddress, dismissOperation } = this.props;
+    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending ?
@@ -112,6 +107,7 @@ class AppContainer extends React.Component<IProps, null> {
             )} />
             <Switch>
               <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
+              <Route exact path="/daos" component={DaoListContainer}/>
               <Route path="/" component={HomeContainer} />
             </Switch>
             <ModalRoute
@@ -152,4 +148,4 @@ class AppContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(withCookies(AppContainer));

@@ -22,26 +22,28 @@ import Util from "./lib/util";
 // tslint:disable-next-line:no-var-requires
 require('dotenv').config();
 
-const arcjsNetwork = Arc.ConfigService.get('network');
+(async () => {
+  const arcjsNetwork = (await Arc.Utils.getNetworkName()).toLowerCase();
 
-if (process.env.NODE_ENV == 'production') {
-  // Use Infura on production
-  const infuraNetwork = arcjsNetwork == 'live' ? 'mainnet' : arcjsNetwork;
+  if (process.env.NODE_ENV == 'production') {
+    // Use Infura on production
+    const infuraNetwork = arcjsNetwork == 'live' ? 'mainnet' : arcjsNetwork;
 
-  // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
-  const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
-  const infuraKey = process.env.INFURA_KEY;
-  const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/" + infuraKey);
+    // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
+    const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
+    const infuraKey = process.env.INFURA_KEY;
+    const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/" + infuraKey);
 
-  // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
-  global.web3 = new Web3(provider.engine);
+    // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
+    global.web3 = new Web3(provider.engine);
 
-  process.env.API_URL = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
-} else {
-  process.env.API_URL = process.env.API_URL || "http://127.0.0.1:3001";
-}
+    process.env.API_URL = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
+  } else {
+    process.env.API_URL = process.env.API_URL || "http://127.0.0.1:3001";
+  }
 
-const cacheBlockchain = async () => {
+  await Arc.InitializeArcJs();
+
   // TODO: store last block checked somewhere (redis?) and only load new data since last check
   let lastBlock = 0;
 
@@ -61,7 +63,10 @@ const cacheBlockchain = async () => {
     const newDaoEvents = await getNewDaoEvents();
     for (let index = 0; index < newDaoEvents.length; index++) {
       const event = newDaoEvents[index];
-      daos[event.args._avatar] = await arcActions.getDAOData(event.args._avatar, true);
+      const daoData = await arcActions.getDAOData(event.args._avatar, true);
+      if (daoData) {
+        daos[event.args._avatar] = daoData;
+      }
     }
   } catch (e) {
     console.error("Error getting DAOs: ", e);
@@ -92,14 +97,17 @@ const cacheBlockchain = async () => {
         initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter] = { ...emptyAccount, address: voteEventArgs._voter };
       }
       // TODO: use arcReducer to add this.
-      initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes[voteEventArgs._proposalId] = {
+      // XXX: copying the object is required here or else it adds this vote to every member in the DAO somehow
+      const memberVotes = Object.assign({}, initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes);
+      memberVotes[voteEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: voteEventArgs._proposalId,
         reputation: Util.fromWei(voteEventArgs._reputation).toNumber(),
         transactionState: TransactionStates.Confirmed,
         vote: Number(voteEventArgs._vote),
         voterAddress: voteEventArgs._voter
-      }
+      };
+      initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes = memberVotes;
     }
   } catch (e) {
     console.error("Error getting votes: ", e)
@@ -119,7 +127,8 @@ const cacheBlockchain = async () => {
       if (!initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter]) {
         initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter] = { ...emptyAccount, address: stakeEventArgs._voter };
       }
-      initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes[stakeEventArgs._proposalId] = {
+      const memberStakes = Object.assign({}, initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes);
+      memberStakes[stakeEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: stakeEventArgs._proposalId,
         transactionState: TransactionStates.Confirmed,
@@ -127,6 +136,7 @@ const cacheBlockchain = async () => {
         prediction: Number(stakeEventArgs._vote),
         stakerAddress: stakeEventArgs._voter
       }
+      initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes = memberStakes;
     }
   } catch (e) {
     console.error("Error getting stakes: ", e);
@@ -153,10 +163,4 @@ const cacheBlockchain = async () => {
       console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
     }
   });
-};
-
-(async () => {
-  await Arc.InitializeArcJs();
-
-  cacheBlockchain();
 })();
