@@ -48,7 +48,6 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   setCurrentAccount: typeof web3Actions.setCurrentAccount;
-  onApprovedStakingGens: typeof web3Actions.onApprovedStakingGens;
   onEthBalanceChanged: typeof web3Actions.onEthBalanceChanged;
   onGenBalanceChanged: typeof web3Actions.onGenBalanceChanged;
   onGenStakingAllowanceChanged: typeof web3Actions.onGenStakingAllowanceChanged;
@@ -58,7 +57,6 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   setCurrentAccount: web3Actions.setCurrentAccount,
-  onApprovedStakingGens: web3Actions.onApprovedStakingGens,
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
   onGenBalanceChanged: web3Actions.onGenBalanceChanged,
   onGenStakingAllowanceChanged: web3Actions.onGenStakingAllowanceChanged,
@@ -87,7 +85,6 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   private accountInterval: any;
   private ethBalanceWatcher: FilterResult;
-  private approvalWatcher: FilterResult;
 
   constructor(props: IProps) {
     super(props);
@@ -96,7 +93,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { accounts, currentAccountGenStakingAllowance, currentAccountGenBalance, dao, daoAddress, ethAccountAddress, ethAccountBalance, networkId, onApprovedStakingGens, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged, setCurrentAccount } = this.props;
+    const { accounts, currentAccountGenStakingAllowance, currentAccountGenBalance, dao, daoAddress, ethAccountAddress, ethAccountBalance, networkId, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged, setCurrentAccount } = this.props;
     const web3 = await Arc.Utils.getWeb3();
 
     await setCurrentAccount(ethAccountAddress, daoAddress ? daoAddress : null);
@@ -123,19 +120,10 @@ class HeaderContainer extends React.Component<IProps, null> {
         onGenStakingAllowanceChanged(newGenStakingAllowance);
       }
     });
-
-    // Watch for approval of GEN token tranfers
-    this.approvalWatcher = stakingToken.Approval({ owner: ethAccountAddress }, { fromBlock: "latest" });
-    this.approvalWatcher.watch((error: any, result: any) => {
-      if (!error && result) {
-        onApprovedStakingGens(result.args.value.toNumber());
-      }
-    });
   }
 
   public componentWillUnmount() {
     this.ethBalanceWatcher.stopWatching();
-    this.approvalWatcher.stopWatching();
   }
 
   public async componentWillReceiveProps(props: IProps) {
@@ -242,9 +230,6 @@ class HeaderContainer extends React.Component<IProps, null> {
                   </div>
                   <div>
                     <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={ethAccountAddress} />
-                  </div>
-                  <div>
-                    {currentAccountGenStakingAllowance} GEN approved for staking
                   </div>
                 </div>
                 { dao

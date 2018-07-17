@@ -6,7 +6,6 @@ import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions } from "reducers/arcReducer";
 import { isStakePending, isVotePending } from "selectors/operations";
@@ -51,14 +50,12 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
 };
 
 interface IDispatchProps {
-  approveStakingGens: typeof web3Actions.approveStakingGens;
   redeemProposal: typeof arcActions.redeemProposal;
   voteOnProposal: typeof arcActions.voteOnProposal;
   stakeProposal: typeof arcActions.stakeProposal;
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
   voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal,
@@ -81,7 +78,6 @@ class ProposalContainer extends React.Component<IProps, null> {
       currentAccountGenStakingAllowance,
       dao,
       proposal,
-      approveStakingGens,
       stakeProposal,
       voteOnProposal,
       isPredictingFail,
@@ -288,7 +284,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                   daoAddress={dao.avatarAddress}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
-                  approveStakingGens={approveStakingGens}
                   transactionState={currentAccountStakeState}
                 />
               </div>
@@ -318,7 +313,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                   daoAddress={dao.avatarAddress}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
-                  approveStakingGens={approveStakingGens}
                   transactionState={currentAccountStakeState}
                 />
               </div>

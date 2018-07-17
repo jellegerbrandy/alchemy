@@ -1,6 +1,6 @@
 import { ActionTypes } from "constants/web3Constants";
 import * as Web3 from "web3";
-import { ApproveAction, ConnectAction } from "actions/web3Actions";
+import { ConnectAction } from "actions/web3Actions";
 import { AsyncActionSequence } from "actions/async";
 
 export enum ConnectionStatus {
@@ -74,10 +74,6 @@ const web3Reducer = (state = initialState, action: any) => {
 
     case ActionTypes.WEB3_ON_GEN_STAKING_ALLOWANCE_CHANGE:
       return {...state, currentAccountGenStakingAllowance: action.payload };
-
-    case ActionTypes.APPROVE_STAKING_GENS: {
-      return state;
-    }
 
     default: {
       return state;

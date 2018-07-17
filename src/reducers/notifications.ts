@@ -178,9 +178,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'ContributionReward.redeemContributionReward': (proposalTitle, {proposalId}: Arc.ContributionRewardRedeemParams) =>
     `Redeeming contribution reward for "${elipsis(proposalTitle, 22)}"`,
   'DAO.new': (proposalTitle, {}: Arc.NewDaoConfig) =>
-    `Creating a new DAO`,
-  'StandardToken.approve': (proposalTitle, {amount}: Arc.StandardTokenApproveOptions) =>
-    `Approving ${Util.fromWei(new BigNumber(amount))} GEN for staking`
+    `Creating a new DAO`
 }
 
 /**
