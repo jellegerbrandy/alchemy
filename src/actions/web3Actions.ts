@@ -151,4 +151,3 @@ export function onGenStakingAllowanceChanged(balance: Number) {
     }
   };
 }
-
