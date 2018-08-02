@@ -174,21 +174,21 @@ class AppContainer extends React.Component<IProps, null> {
 
     const redeemGen = contributionRewardInstance.RedeemExternalToken({}, {fromBlock: 'latest'});
     redeemGen.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      const { _beneficiary, _avatar, _proposalId } = result.args;
       onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ExternalToken, true);
     }, -1);
     this.watchers.push(redeemGen);
 
     const redeemToken = contributionRewardInstance.RedeemNativeToken({}, {fromBlock: 'latest'});
     redeemToken.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      const { _beneficiary, _avatar, _proposalId } = result.args;
       onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.NativeToken, true);
     }, -1);
     this.watchers.push(redeemToken);
 
     const redeemRep = contributionRewardInstance.RedeemReputation({}, {fromBlock: 'latest'});
     redeemRep.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      const { _beneficiary, _avatar, _proposalId } = result.args;
       onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, true);
     }, -1);
     this.watchers.push(redeemRep);
@@ -196,21 +196,21 @@ class AppContainer extends React.Component<IProps, null> {
     // GenesisProtocol Redemptions
     const redeem = votingMachineInstance.Redeem({}, {fromBlock: 'latest'});
     redeem.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      const { _beneficiary, _avatar, _proposalId } = result.args;
       onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false);
     }, -1);
     this.watchers.push(redeem);
 
     const redeemDaoBounty = votingMachineInstance.RedeemDaoBounty({}, {fromBlock: 'latest'});
     redeemDaoBounty.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false);
+      const { _beneficiary, _avatar, _proposalId } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.DAOBounty, false);
     }, -1);
     this.watchers.push(redeemDaoBounty);
 
     const redeemRepGP = votingMachineInstance.RedeemReputation({}, {fromBlock: 'latest'});
     redeemRepGP.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      const { _beneficiary, _avatar, _proposalId } = result.args;
       onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, false);
     }, -1);
     this.watchers.push(redeemRepGP);

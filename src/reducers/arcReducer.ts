@@ -89,6 +89,7 @@ export interface IDaoState {
 export enum RewardType {
   ETH,
   GEN,
+  DAOBounty,
   NativeToken,
   Reputation,
   ExternalToken
@@ -570,8 +571,11 @@ const arcReducer = (state = initialState, action: any) => {
             type === RewardType.GEN ?
               {
                 stakerTokens: {$set: 0},
-                stakerBountyTokens: {$set: 0},
                 voterTokens: {$set: 0},
+              } :
+            type === RewardType.DAOBounty ?
+              {
+                stakerBountyTokens: {$set: 0},
               } :
               {}
           )
