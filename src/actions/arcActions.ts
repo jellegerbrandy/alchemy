@@ -66,6 +66,7 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
 
     for (let index = 0; index < newOrgEvents.length; index++) {
       const event = newOrgEvents[index];
+      console.log("getting dao ", event.args._avatar, , " from block", event.blockNumber);
       const daoData = await getDAOData(event.args._avatar, null, fromBlock, toBlock);
       if (daoData) {
         daos[event.args._avatar] = daoData;
@@ -94,7 +95,14 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest')
 
 export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest') {
   const web3 = await Arc.Utils.getWeb3();
-  const daoInstance = await Arc.DAO.at(avatarAddress);
+  let daoInstance;
+  try {
+    daoInstance = await Arc.DAO.at(avatarAddress);
+  } catch (e) {
+    console.error("Error loading DAO at address ", avatarAddress, ": ", e);
+    return false;
+  }
+
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
   const votingMachineAddress = await contributionRewardInstance.getVotingMachineAddress(avatarAddress);
   if (votingMachineAddress == "0x0000000000000000000000000000000000000000") {
@@ -143,31 +151,39 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   // Get all "members" by seeing who has reputation in this DAO
   let memberAddresses: string[] = [];
 
-  const mintReputationEvents = daoInstance.reputation.Mint({}, { fromBlock, toBlock });
-  const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
-  let eventsArray = await getMintReputationEvents();
-  for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-    memberAddresses.push(eventsArray[cnt].args._to.toLowerCase());
-  }
+  console.log("Getting DAO reputations ");
 
-  // Make sure current logged in account is added, even if they have no reputation right now
-  if (currentAccountAddress) {
-    memberAddresses.push(currentAccountAddress);
-  }
-
-  memberAddresses = [...new Set(memberAddresses)]; // Dedupe
   const members: { [address: string]: IAccountState } = {};
-  for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
-    const address = memberAddresses[cnt];
-    const member: IAccountState = newAccount(avatarAddress, address);
-    const tokens = await daoInstance.token.getBalanceOf(address);
-    member.tokens = Util.fromWei(tokens);
-    const reputation = await daoInstance.reputation.reputationOf(address);
-    member.reputation = Util.fromWei(reputation);
-    members[address] = member;
+  try {
+    const mintReputationEvents = daoInstance.reputation.Mint({}, { fromBlock, toBlock });
+    const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
+    let eventsArray = await getMintReputationEvents();
+    for (let cnt = 0; cnt < eventsArray.length; cnt++) {
+      console.log("adding member ", eventsArray[cnt].args._to.toLowerCase(), " from block ", eventsArray[cnt].blockNumber);
+      memberAddresses.push(eventsArray[cnt].args._to.toLowerCase());
+    }
+
+    // Make sure current logged in account is added, even if they have no reputation right now
+    if (currentAccountAddress) {
+      memberAddresses.push(currentAccountAddress);
+    }
+
+    memberAddresses = [...new Set(memberAddresses)]; // Dedupe
+    for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
+      const address = memberAddresses[cnt];
+      const member: IAccountState = newAccount(avatarAddress, address);
+      const tokens = await daoInstance.token.getBalanceOf(address);
+      member.tokens = Util.fromWei(tokens);
+      const reputation = await daoInstance.reputation.reputationOf(address);
+      member.reputation = Util.fromWei(reputation);
+      members[address] = member;
+    }
+  } catch(e) {
+    console.error("Error getting DAO reputations", e, e.stack);
   }
 
   //**** Get all proposals ****//
+  console.log("Getting DAO proposals ");
   const votableProposals = await (await contributionRewardInstance.getVotableProposals(daoInstance.avatar.address))({}, { fromBlock, toBlock }).get();
   const executedProposals = await (await contributionRewardInstance.getExecutedProposals(daoInstance.avatar.address))({}, { fromBlock, toBlock }).get();
   const proposals = [...votableProposals, ...executedProposals];
@@ -278,6 +294,7 @@ export function getProposal(avatarAddress: string, proposalId: string, fromBlock
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
 // TODO: put in a lib/util class somewhere?
 async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {
+  console.log("Getting proposal ", contributionProposal.proposalId);
   const proposalId = contributionProposal.proposalId;
   const descriptionHash = contributionProposal.contributionDescriptionHash;
   const avatarAddress = daoInstance.avatar.address;
