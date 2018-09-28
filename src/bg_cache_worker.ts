@@ -148,7 +148,7 @@ async function updateCache() {
     const proposalEvents: Array<Arc.DecodedLogEntryEvent<Arc.NewContributionProposalEventResult>> = await getProposalEvents(null, -1);
     for (let index = 0; index < proposalEvents.length; index++) {
       const event = proposalEvents[index];
-      console.log("Got new proposal", event.args);
+      console.log("Got new proposal", event.args, " from block ", event.blockNumber);
       await store.dispatch(arcActions.onProposalCreateEvent(event.args));
     }
 
@@ -162,7 +162,7 @@ async function updateCache() {
     const stakeEvents: Array<Arc.DecodedLogEntryEvent<Arc.StakeEventResult>> = await getStakeEvents(null, -1);
     for (let index = 0; index < stakeEvents.length; index++) {
       const event = stakeEvents[index];
-      console.log("Got new stake", event.args);
+      console.log("Got new stake", event.args, " from block ", event.blockNumber);
       await store.dispatch(arcActions.onStakeEvent(event.args._avatar, event.args._proposalId, event.args._staker, Number(event.args._vote), Util.fromWei(event.args._amount)));
     }
 
@@ -173,7 +173,7 @@ async function updateCache() {
     const voteEvents: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>> = await getVoteEvents(null, -1);
     for (let index = 0; index < voteEvents.length; index++) {
       const event = voteEvents[index];
-      console.log("Got new vote", event.args);
+      console.log("Got new vote", event.args, " from block ", event.blockNumber);
       await store.dispatch(arcActions.onVoteEvent(event.args._avatar, event.args._proposalId, event.args._voter, Number(event.args._vote), Util.fromWei(event.args._reputation)));
     }
 

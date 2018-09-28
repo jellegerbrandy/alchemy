@@ -294,7 +294,7 @@ export function getProposal(avatarAddress: string, proposalId: string, fromBlock
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
 // TODO: put in a lib/util class somewhere?
 async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {
-  console.log("Getting proposal ", contributionProposal.proposalId);
+  console.log("Getting proposal details ", contributionProposal.proposalId);
   const proposalId = contributionProposal.proposalId;
   const descriptionHash = contributionProposal.contributionDescriptionHash;
   const avatarAddress = daoInstance.avatar.address;
