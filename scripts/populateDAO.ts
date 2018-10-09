@@ -357,13 +357,6 @@ const argv: any =
         type: 'string'
       }
     )
-    /**
-     * 0. 0xB0C908140FE6FD6FBd4990A5c2e35ca6Dc12bFB2
-     * 1. 0x9c7F9f45A22aD3D667A5439f72B563dF3AA70aAe
-     * 2. 0xa2A064b3B22fC892dfB71923a6D844b953AA247C
-     * 3. 0xE7D97598a2272e3F9d8479B8fCB672dB2907abCf
-     * 4. 0xdEEAa92e025CA7fE34679B0B92Cd4Ffa162c8DE8
-     */
     .option(
       'dai', {
         alias: 'd',
