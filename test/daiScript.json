@@ -1,0 +1,1084 @@
+{
+    "name": "Circles",
+    "tokenName": "Circ",
+    "tokenSymbol": "CRL",
+    "params": {
+        "boostedVotePeriodLimit": 864000,
+        "daoBountyConst": 30,
+        "daoBountyLimit": "500000000000000000000",
+        "minimumStakingFee": 0,
+        "preBoostedVotePeriodLimit": 3888000,
+        "preBoostedVoteRequiredPercentage": 50,
+        "proposingRepRewardConstA": 5,
+        "proposingRepRewardConstB": 10,
+        "quietEndingPeriod": 432000,
+        "stakerFeeRatioForVoters": 20,
+        "thresholdConstA": "100000000000000000000",
+        "thresholdConstB": 3,
+        "votersGainRepRatioFromLostRep": 90,
+        "votersReputationLossRatio": 4
+    },
+    "founders": [
+        {"id": 0, "reputation": 100},
+        {"id": 1, "reputation": 700},
+        {"id": 2, "reputation": 50},
+        {"id": 3, "reputation": 50},
+        {"id": 4, "reputation": 50}
+    ],
+    "steps": [
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 1,
+                "title": "Solo boosted proposal timeout",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 1,
+                "vote": "Yes"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 1,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 1,
+                "vote": "Yes",
+                "amount": 7
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 2,
+                "title": "Boosted Timeout Win A5 (Test with higher gas limit)",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 0,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 2,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 2,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 2,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 2,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 2,
+                "vote": "Yes"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 2,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 3,
+                "title": "Boosted Timeout Lose A5",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 0,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 3,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 3,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 3,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 3,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 3,
+                "vote": "No"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 3,
+                "vote": "Yes",
+                "amount": 100
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 4,
+                "title": "Boosted Decision Win A2",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 0,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 4,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 4,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 4,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 4,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 4,
+                "vote": "Yes"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 4,
+                "vote": "Yes",
+                "amount": 100
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 4,
+                "vote": "Yes"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 5,
+                "title": "Boosted Decision Lose A1",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 0,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 5,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 5,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 5,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 5,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 5,
+                "vote": "No"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 5,
+                "vote": "Yes",
+                "amount": 100
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 5,
+                "vote": "No"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 6,
+                "title": "Regular Timeout Lose A5/2",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 0,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 6,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 6,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 6,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 6,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 6,
+                "vote": "Yes"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 7,
+                "title": "Regular Decision Win A",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 0,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 7,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 7,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 7,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 7,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 7,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 7,
+                "vote": "Yes"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 8,
+                "title": "Regular Decision Lose A",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 0,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 8,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 8,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 8,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 8,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 8,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 8,
+                "vote": "No"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 9,
+                "title": "Boosted Timeout Win B",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 9,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 9,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 9,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 9,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 9,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 9,
+                "vote": "Yes",
+                "amount": 150
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 10,
+                "title": "Boosted Timeout Lose B",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 10,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 10,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 10,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 10,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 10,
+                "vote": "No"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 10,
+                "vote": "Yes",
+                "amount": 150
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 11,
+                "title": "Boosted Decision Win B test",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 11,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 11,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 11,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 11,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 11,
+                "vote": "Yes"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 11,
+                "vote": "Yes",
+                "amount": 200
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 11,
+                "vote": "Yes"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 12,
+                "title": "Boosted Decision Lose B",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 12,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 12,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 12,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 12,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 12,
+                "vote": "No"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 12,
+                "vote": "Yes",
+                "amount": 200
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 12,
+                "vote": "No"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 13,
+                "title": "Regular Timeout Lose B 1",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 13,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 13,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 13,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 13,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 13,
+                "vote": "Yes"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 14,
+                "title": "Regular Decision Win B ",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 14,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 14,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 14,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 14,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 14,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 14,
+                "vote": "Yes"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 15,
+                "title": "Regular Decision Lose B 1",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 15,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 15,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 15,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 15,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 15,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 15,
+                "vote": "No"
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 16,
+                "title": "Boosted Timeout Win Punish B 2",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 16,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 16,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 16,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 16,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 16,
+                "vote": "Yes"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 16,
+                "vote": "Yes",
+                "amount": 5
+            }
+        },
+
+        {"action": "SwitchAccount","args": {"id": 4}},
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 17,
+                "title": "Regular Decision Win Punish B 1",
+                "description": "https://github.com/daostack/alchemy",
+                "beneficiary": 1,
+                "amount": 0.01,
+                "reputation": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 17,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 3}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 17,
+                "vote": "No"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 0}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 17,
+                "vote": "Yes",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Stake",
+            "args": {
+                "id": 17,
+                "vote": "No",
+                "amount": 1
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 2}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 17,
+                "vote": "Yes"
+            }
+        },
+        {"action": "SwitchAccount","args": {"id": 1}},
+        {
+            "action": "Vote",
+            "args": {
+                "id": 17,
+                "vote": "Yes"
+            }
+        }
+    ]
+}
