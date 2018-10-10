@@ -161,10 +161,10 @@ async function main(options: Opts) {
   }
 
   async function createDAO() {
-
-    logger.info(`Creating DAO: {name='${name}',founders=${founders.map((x) => '#' + x.id)}}`);
+    const daoName = `${name}-${Math.floor(Math.random() * 1000)}`;
+    logger.info(`Creating DAO: {name='${daoName}',founders=${founders.map((x) => '#' + x.id)}}`);
     const dao = await Arc.DAO.new({
-      name: `${name}-${Math.floor(Math.random() * 1000)}`,
+      name: daoName,
       tokenName,
       tokenSymbol,
       founders: founders.map((x) => ({ address: accounts[x.id], tokens: Util.toWei(0), reputation: Util.toWei(x.reputation) })) as any,
