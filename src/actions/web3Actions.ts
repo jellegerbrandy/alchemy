@@ -1,3 +1,4 @@
+import * as Box from "3box";
 import * as Arc from "@daostack/arc.js";
 import * as BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
@@ -117,6 +118,13 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
     payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress));
     payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address));
+    console.log("murpel");
+    try {
+      const profile = await Box.getProfile(accountAddress);
+      console.log("got profile = ", profile);
+    } catch (e) {
+      console.log("error with 3box", e);
+    }
 
     const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,

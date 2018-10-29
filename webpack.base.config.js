@@ -75,6 +75,11 @@ module.exports = {
     ]
   },
 
+  node: {
+    fs: 'empty',
+    child_process: 'empty'
+  },
+
   plugins: [
     // do not emit compiled assets that include errors
     new webpack.NoEmitOnErrorsPlugin(),
